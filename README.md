@@ -1,5 +1,10 @@
 # Module loader inside your Laravel app
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/zonneplan/laravel-module-loader.svg?style=flat-square)](https://packagist.org/packages/zonneplan/laravel-module-loader)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/zonneplan/laravel-module-loader/master.svg?style=flat-square)](https://travis-ci.org/zonneplan/laravel-module-loader)
+[![Total Downloads](https://img.shields.io/packagist/dt/zonneplan/laravel-module-loader.svg?style=flat-square)](https://packagist.org/packages/zonneplan/laravel-module-loader)
+
 The `zonneplan/laravel-module-loader` package provides an easy to use module loader 
 which can be used to modulize your project.
 
