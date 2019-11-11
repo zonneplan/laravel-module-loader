@@ -14,12 +14,10 @@ use Zonneplan\ModuleLoader\Support\Contracts\ModuleContract;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
 
 /**
- * Class ModuleLoader
+ * Class ModuleLoader.
  *
  * The module loader acts as an opinionated ServiceProvider and will automatically try to load migrations,
  * views, etc. from a predefined folder structure.
- *
- * @package Zonneplan\LaravelModuleLoader
  */
 abstract class Module extends ServiceProvider implements ModuleContract
 {
@@ -41,8 +39,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     /**
      * Register the module.
      *
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     public function register(): void
     {
@@ -55,8 +54,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     /**
      * Boot the module.
      *
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     public function boot(): void
     {
@@ -84,8 +84,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     protected function loadMigrations(): void
     {
@@ -97,8 +98,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     protected function loadViews(): void
     {
@@ -110,8 +112,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     protected function loadTranslations(): void
     {
@@ -123,8 +126,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @return void
      * @throws ReflectionException
+     *
+     * @return void
      */
     protected function loadConfigs(): void
     {
@@ -169,8 +173,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @return string
      * @throws ReflectionException
+     *
+     * @return string
      */
     protected function getModulePath(): string
     {
@@ -203,7 +208,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * Registers the commands of the schedule
+     * Registers the commands of the schedule.
      *
      * @return void
      */
@@ -213,7 +218,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * Registers middleware
+     * Registers middleware.
      *
      * @return void
      */
@@ -228,14 +233,14 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * Registers factories
+     * Registers factories.
      *
      * @return void
      */
     private function registerFactories(): void
     {
         $this->app->afterResolving(Factory::class, function (Factory $faker) {
-            $faker->load($this->getModulePath() . '/Database/Factories');
+            $faker->load($this->getModulePath().'/Database/Factories');
         });
     }
 

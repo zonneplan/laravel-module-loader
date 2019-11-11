@@ -16,7 +16,7 @@ class ModuleRepository implements ModuleRepositoryContract
     protected $modules = [];
 
     /**
-     * Registers a new module with a path
+     * Registers a new module with a path.
      *
      * @param string $module
      * @param string $path
@@ -31,7 +31,7 @@ class ModuleRepository implements ModuleRepositoryContract
     }
 
     /**
-     * Returns a list of all loaded modules
+     * Returns a list of all loaded modules.
      *
      * @return array
      */
@@ -41,7 +41,7 @@ class ModuleRepository implements ModuleRepositoryContract
     }
 
     /**
-     * Check if the module is loaded
+     * Check if the module is loaded.
      *
      * @param string $module
      *
@@ -53,11 +53,13 @@ class ModuleRepository implements ModuleRepositoryContract
     }
 
     /**
-     * Retrieves the path from the module
+     * Retrieves the path from the module.
      *
      * @param string $module
-     * @return string
+     *
      * @throws ModuleNotFoundException
+     *
+     * @return string
      */
     public function get(string $module): string
     {

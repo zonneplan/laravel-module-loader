@@ -19,6 +19,7 @@ abstract class TestCase extends Orchestra
             ModulesServiceProvider::class,
         ];
     }
+
     protected function getPackageAliases($app)
     {
         return [
