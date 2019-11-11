@@ -10,11 +10,12 @@ class ModuleRouteLoader
     private const FALLBACK_ROUTE_TYPE = 'routes';
 
     private const ROUTE_TYPES = [
-        self::FALLBACK_ROUTE_TYPE, 'api', 'channels', 'console', 'web'
+        self::FALLBACK_ROUTE_TYPE, 'api', 'channels', 'console', 'web',
     ];
 
     /**
      * @param string $type
+     *
      * @return void
      */
     public function loadAll(string $type): void
@@ -27,8 +28,10 @@ class ModuleRouteLoader
     /**
      * @param string $moduleName
      * @param string $type
-     * @return void
+     *
      * @throws ModuleNotFoundException
+     *
+     * @return void
      */
     public function load(string $moduleName, string $type): void
     {
@@ -40,6 +43,7 @@ class ModuleRouteLoader
      *
      * @param string $path
      * @param string $type
+     *
      * @return void
      */
     protected function loadRoutes(string $path, string $type): void
@@ -48,7 +52,7 @@ class ModuleRouteLoader
             return;
         }
 
-        $file =  $type === self::FALLBACK_ROUTE_TYPE
+        $file = $type === self::FALLBACK_ROUTE_TYPE
             ? "{$path}/{$type}.php"
             : "{$path}/Routes/{$type}.php";
 

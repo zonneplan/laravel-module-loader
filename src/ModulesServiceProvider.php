@@ -11,7 +11,7 @@ use Zonneplan\ModuleLoader\Support\ModuleRouteLoader;
 class ModulesServiceProvider extends ServiceProvider
 {
     /**
-     * Register services
+     * Register services.
      *
      * @return void
      */
@@ -29,7 +29,7 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $loader = new ModuleRouteLoader;
+        $loader = new ModuleRouteLoader();
 
         Router::macro('module', function (string $name, ?string $type = 'routes') use ($loader) {
             $loader->load($name, $type);
