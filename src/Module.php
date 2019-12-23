@@ -47,8 +47,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
     {
         // Register this module in the repository
         app(ModuleRepositoryContract::class)->register($this->getModuleNamespace(), $this->getModulePath());
-
-        $this->registerCommands();
     }
 
     /**
@@ -61,6 +59,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
+            $this->registerCommands();
             $this->loadCommandSchedule();
             $this->loadMigrations();
         }
