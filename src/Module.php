@@ -58,18 +58,16 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     public function boot(): void
     {
-        $this->loadConfigs();
-        $this->loadTranslations();
-        $this->registerListeners();
-
         if ($this->app->runningInConsole()) {
             $this->registerCommands();
             $this->loadCommandSchedule();
             $this->loadMigrations();
             $this->registerFactories();
-            return;
         }
 
+        $this->loadConfigs();
+        $this->loadTranslations();
+        $this->registerListeners();
         $this->loadViews();
         $this->registerPolicies();
         $this->registerMiddleware();
