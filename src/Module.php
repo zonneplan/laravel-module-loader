@@ -21,8 +21,8 @@ use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
  */
 abstract class Module extends ServiceProvider implements ModuleContract
 {
-    private const ROUTE_FILE_TYPES = [
-        'routes', 'web', 'api', 'channels', 'console',
+    protected const ROUTE_FILE_TYPES = [
+        'routes', 'web', 'api',
     ];
 
     /** @var array */

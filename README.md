@@ -123,9 +123,15 @@ protected $subscribe = [
 ];
 ```
 
+#### Registering routes:
+All modules will by default try to load all route files in the `Routes` folder.
+Any of the following files will be auto loaded:
+
+`routes.php` `api.php` `web.php`
+
 ## Requirements
 
-This package requires at least Laravel 5.8 or higher, PHP 7.2 or higher 
+This package requires at least Laravel 6 or higher, PHP 7.2 or higher 
 
 ## Installation
 
@@ -142,31 +148,6 @@ Register the namespace: `"Modules\\": "app/Modules"` in `composer.json` like:
         },
         ...
 ``` 
-
-In the following files: `web.php`, `api.php`, `channels.php`, `console.php`  insert respectively:
-``` php
-Route::modules('web');
-Route::modules('api');
-Route::modules('channels');
-Route::modules('console');
-```
-
-Routes will then be searched in the `Routes` folder of every module, but don't necessarily have to exist: 
-
-```$xslt
-├──MyModule
-   ├──Routes
-      ├──web.php      (optional)
-      ├──api.php      (optional)
-      ├──channels.php (optional)
-      ├──console.php  (optional)
-```
-
-There is also the option to insert:
-``` php
-Route::modules();
-```
-Routes will then be searched in `routes.php` at the root of the module 
 
 ## Authors
 
