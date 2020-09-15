@@ -21,6 +21,10 @@ use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
  */
 abstract class Module extends ServiceProvider implements ModuleContract
 {
+    private const ROUTE_FILE_TYPES = [
+        'routes', 'web', 'api', 'channels', 'console',
+    ];
+
     /** @var array */
     protected $policies = [];
 
@@ -70,6 +74,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
         $this->registerListeners();
         $this->loadViews();
         $this->registerPolicies();
+        $this->registerRoutes();
         $this->registerMiddleware();
     }
 
@@ -244,6 +249,25 @@ abstract class Module extends ServiceProvider implements ModuleContract
         $this->app->afterResolving(Factory::class, function (Factory $faker) {
             $faker->load($this->getModulePath().'/Database/Factories');
         });
+    }
+
+    private function registerRoutes(): void
+    {
+        $routePath = sprintf('%s/Routes', $this->getModulePath());
+        $routeFilePattern = sprintf('%s/*.php', $routePath);
+
+        if (file_exists($routePath) && empty(($files = glob($routeFilePattern))) === false) {
+            foreach ($files as $file) {
+                // Skip files that are not allowed route types
+                if (in_array(rtrim($file, '.php'), static::ROUTE_FILE_TYPES) === false) {
+                    continue;
+                }
+
+                $path = sprintf('%s/%s', $routePath, basename($file));
+
+                $this->loadRoutesFrom($path);
+            }
+        }
     }
 
     /**
