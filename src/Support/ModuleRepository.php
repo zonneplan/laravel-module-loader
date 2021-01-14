@@ -13,7 +13,7 @@ use Zonneplan\ModuleLoader\Support\Exceptions\ModuleNotFoundException;
 class ModuleRepository implements ModuleRepositoryContract
 {
     /** @var array */
-    protected $modules = [];
+    protected array $modules = [];
 
     /**
      * Registers a new module with a path.

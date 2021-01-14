@@ -3,7 +3,6 @@
 namespace Zonneplan\ModuleLoader;
 
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -22,28 +21,23 @@ use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
 abstract class Module extends ServiceProvider implements ModuleContract
 {
     protected const ROUTE_FILE_TYPES = [
-        'routes', 'web', 'api',
+        'routes',
+        'web',
+        'api',
     ];
 
-    /** @var array */
-    protected $policies = [];
+    protected array $policies;
 
-    /** @var array */
-    protected $middleware = [];
+    protected array $middleware;
 
-    /** @var array */
-    protected $listen = [];
+    protected array $listen;
 
-    /** @var array */
-    protected $subscribe = [];
+    protected array $subscribe;
 
-    /** @var string */
-    protected $modulePath;
+    protected string $modulePath;
 
     /**
      * Register the module.
-     *
-     * @throws ReflectionException
      *
      * @return void
      */
@@ -56,9 +50,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
     /**
      * Boot the module.
      *
-     * @throws ReflectionException
-     *
      * @return void
+     * @throws ReflectionException
      */
     public function boot(): void
     {
@@ -91,9 +84,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @return void
+     * @throws ReflectionException
      */
     protected function loadMigrations(): void
     {
@@ -105,9 +97,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @return void
+     * @throws ReflectionException
      */
     protected function loadViews(): void
     {
@@ -119,9 +110,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @return void
+     * @throws ReflectionException
      */
     protected function loadTranslations(): void
     {
@@ -133,9 +123,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @return void
+     * @throws ReflectionException
      */
     protected function loadConfigs(): void
     {
@@ -180,8 +169,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @return string
      */
     protected function getModulePath(): string
@@ -246,9 +233,8 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     private function registerFactories(): void
     {
-        $this->app->afterResolving(Factory::class, function (Factory $faker) {
-            $faker->load($this->getModulePath().'/Database/Factories');
-        });
+        // Unfortunately Laravel 8 no longer supports loading factories like this
+        // because they want you to use ModelFactories.
     }
 
     private function registerRoutes(): void
