@@ -26,13 +26,13 @@ abstract class Module extends ServiceProvider implements ModuleContract
         'api',
     ];
 
-    protected array $policies;
+    protected array $policies = [];
 
-    protected array $middleware;
+    protected array $middleware = [];
 
-    protected array $listen;
+    protected array $listen = [];
 
-    protected array $subscribe;
+    protected array $subscribe = [];
 
     protected string $modulePath;
 
@@ -85,7 +85,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     /**
      * @return void
-     * @throws ReflectionException
      */
     protected function loadMigrations(): void
     {
@@ -98,7 +97,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     /**
      * @return void
-     * @throws ReflectionException
      */
     protected function loadViews(): void
     {
@@ -111,7 +109,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     /**
      * @return void
-     * @throws ReflectionException
      */
     protected function loadTranslations(): void
     {
@@ -124,7 +121,6 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     /**
      * @return void
-     * @throws ReflectionException
      */
     protected function loadConfigs(): void
     {

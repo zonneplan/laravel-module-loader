@@ -12,7 +12,6 @@ use Zonneplan\ModuleLoader\Support\Exceptions\ModuleNotFoundException;
  */
 class ModuleRepository implements ModuleRepositoryContract
 {
-    /** @var array */
     protected array $modules = [];
 
     /**
