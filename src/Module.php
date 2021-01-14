@@ -34,7 +34,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     protected array $subscribe = [];
 
-    protected string $modulePath;
+    protected ?string $modulePath = null;
 
     /**
      * Register the module.
