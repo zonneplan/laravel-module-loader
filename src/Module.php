@@ -229,8 +229,12 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     private function registerFactories(): void
     {
-        // Unfortunately Laravel 8 no longer supports loading factories like this
-        // because they want you to use ModelFactories.
+        if (
+            method_exists($this, 'loadFactoriesFrom') &&
+            file_exists($this->getModulePath().'/Database/Factories')
+        ) {
+            $this->loadFactoriesFrom($this->getModulePath().'/Database/Factories');
+        }
     }
 
     private function registerRoutes(): void
