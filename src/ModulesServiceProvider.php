@@ -17,9 +17,7 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ModuleRepositoryContract::class, static function () {
-            return new ModuleRepository();
-        });
+        $this->app->singleton(ModuleRepositoryContract::class, ModuleRepository::class);
     }
 
     /**

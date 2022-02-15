@@ -4,12 +4,12 @@ namespace Zonneplan\ModuleLoader\Test\Support;
 
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
 use Zonneplan\ModuleLoader\Support\Exceptions\ModuleNotFoundException;
+use Zonneplan\ModuleLoader\Support\ModuleRepository;
 use Zonneplan\ModuleLoader\Test\TestCase;
 
 class ModuleRepositoryTest extends TestCase
 {
-    /* @var ModuleRepository */
-    protected $moduleRepository;
+    protected ModuleRepository $moduleRepository;
 
     public function setUp(): void
     {
