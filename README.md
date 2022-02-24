@@ -5,6 +5,14 @@
 [![Build Status](https://img.shields.io/travis/zonneplan/laravel-module-loader/master.svg?style=flat-square)](https://travis-ci.org/zonneplan/laravel-module-loader)
 [![Total Downloads](https://img.shields.io/packagist/dt/zonneplan/laravel-module-loader.svg?style=flat-square)](https://packagist.org/packages/zonneplan/laravel-module-loader)
 
+| **Laravel**  | **laravel-module-loader** |
+|---|---------------------------|
+| 5.8  | ^1.0                      |
+| 6.0  | ^1.0                      |
+| 7.0  | ^1.0                      |
+| 8.0  | ^2.0                      |
+| 9.0  | ^3.0                      |
+
 The `zonneplan/laravel-module-loader` package provides an easy to use module loader 
 which can be used to modulize your project.
 
