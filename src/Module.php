@@ -36,7 +36,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     protected ?string $modulePath = null;
 
-    protected bool $disableAutomaticFactoryLoading = false;
+    protected bool $enableLegacyFactoryLoading = false;
 
     /**
      * Register the module.
@@ -232,7 +232,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
     private function registerFactories(): void
     {
         if (
-            $this->disableAutomaticFactoryLoading === false &&
+            $this->enableLegacyFactoryLoading &&
             method_exists($this, 'loadFactoriesFrom') &&
             file_exists($this->getModulePath().'/Database/Factories')
         ) {
