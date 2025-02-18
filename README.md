@@ -12,6 +12,9 @@
 | 7.0  | ^1.0                      |
 | 8.0  | ^2.0                      |
 | 9.0  | ^3.0                      |
+| 10.0  | ^4.0                     |
+| 11.0  | ^5.0                     |
+| 12.0  | ^6.0                     |
 
 The `zonneplan/laravel-module-loader` package provides an easy to use module loader 
 which can be used to modulize your project.
