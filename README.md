@@ -75,6 +75,7 @@ app
           ├──api.php            
           ├──channels.php       
           ├──console.php        
+          ├──mcp.php        
        ├──MyModuleServiceProvider.php
        ├──tests
 ```
@@ -138,7 +139,7 @@ protected $subscribe = [
 All modules will by default try to load all route files in the `Routes` folder.
 Any of the following files will be auto loaded:
 
-`routes.php` `api.php` `web.php`
+`routes.php` `api.php` `web.php` `mcp.php`
 
 ## Requirements
 

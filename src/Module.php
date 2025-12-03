@@ -24,6 +24,7 @@ abstract class Module extends ServiceProvider implements ModuleContract
         'routes',
         'web',
         'api',
+        'mcp',
     ];
 
     protected array $policies = [];
