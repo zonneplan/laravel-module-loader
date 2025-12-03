@@ -249,8 +249,9 @@ abstract class Module extends ServiceProvider implements ModuleContract
         if (file_exists($routePath) && empty(($files = glob($routeFilePattern))) === false) {
             foreach ($files as $file) {
                 $fileName = basename($file);
+                $routeType = basename($file, '.php');
                 // Skip files that are not allowed route types
-                if (in_array(rtrim($fileName, '.php'), static::ROUTE_FILE_TYPES) === false) {
+                if (in_array($routeType, static::ROUTE_FILE_TYPES) === false) {
                     continue;
                 }
 
