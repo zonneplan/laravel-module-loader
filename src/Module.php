@@ -126,6 +126,10 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     protected function loadConfigs(): void
     {
+        if (app()->configurationIsCached()) {
+            return;
+        }
+
         $configPath = sprintf('%s/Config', $this->getModulePath());
         $configFilePattern = sprintf('%s/*.php', $configPath);
 
@@ -242,6 +246,10 @@ abstract class Module extends ServiceProvider implements ModuleContract
 
     private function registerRoutes(): void
     {
+        if ($this->app->routesAreCached()) {
+            return;
+        }
+
         $routePath = sprintf('%s/Routes', $this->getModulePath());
         $routeFilePattern = sprintf('%s/*.php', $routePath);
 
