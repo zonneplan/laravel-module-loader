@@ -4,7 +4,10 @@ namespace Zonneplan\ModuleLoader;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Zonneplan\ModuleLoader\Console\ModuleCacheCommand;
+use Zonneplan\ModuleLoader\Console\ModuleClearCommand;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
+use Zonneplan\ModuleLoader\Support\ModuleManifest;
 use Zonneplan\ModuleLoader\Support\ModuleRepository;
 use Zonneplan\ModuleLoader\Support\ModuleRouteLoader;
 
@@ -18,6 +21,7 @@ class ModulesServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ModuleRepositoryContract::class, ModuleRepository::class);
+        $this->app->singleton(ModuleManifest::class);
     }
 
     /**
@@ -36,5 +40,12 @@ class ModulesServiceProvider extends ServiceProvider
         Router::macro('modules', function (?string $type = 'routes') use ($loader) {
             $loader->loadAll($type);
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ModuleCacheCommand::class,
+                ModuleClearCommand::class,
+            ]);
+        }
     }
 }

@@ -11,6 +11,7 @@ use ReflectionClass;
 use ReflectionException;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleContract;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
+use Zonneplan\ModuleLoader\Support\ModuleManifest;
 
 /**
  * Class ModuleLoader.
@@ -37,6 +38,10 @@ abstract class Module extends ServiceProvider implements ModuleContract
     protected ?string $modulePath = null;
 
     protected bool $enableLegacyFactoryLoading = false;
+
+    private ?array $cachedManifest = null;
+
+    private bool $manifestLoaded = false;
 
     /**
      * Register the module.
@@ -90,6 +95,16 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     protected function loadMigrations(): void
     {
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            if ($manifest['migrations'] !== null) {
+                $this->loadMigrationsFrom($manifest['migrations']);
+            }
+
+            return;
+        }
+
         $file = "{$this->getModulePath()}/Database/Migrations";
 
         if (file_exists($file)) {
@@ -102,6 +117,16 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     protected function loadViews(): void
     {
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            if ($manifest['views'] !== null) {
+                $this->loadViewsFrom($manifest['views'], $this->getModuleNamespace());
+            }
+
+            return;
+        }
+
         $file = "{$this->getModulePath()}/Resources/views";
 
         if (file_exists($file)) {
@@ -114,6 +139,16 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     protected function loadTranslations(): void
     {
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            if ($manifest['translations'] !== null) {
+                $this->loadTranslationsFrom($manifest['translations'], $this->getModuleNamespace());
+            }
+
+            return;
+        }
+
         $file = "{$this->getModulePath()}/Resources/lang";
 
         if (file_exists($file)) {
@@ -127,6 +162,19 @@ abstract class Module extends ServiceProvider implements ModuleContract
     protected function loadConfigs(): void
     {
         if (app()->configurationIsCached()) {
+            return;
+        }
+
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            foreach ($manifest['configs'] as $file) {
+                $filename = pathinfo($file, PATHINFO_FILENAME);
+                $configKey = "{$this->getModuleNamespace()}.$filename";
+
+                $this->mergeConfigFrom($file, $configKey);
+            }
+
             return;
         }
 
@@ -235,18 +283,44 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     private function registerFactories(): void
     {
-        if (
-            $this->enableLegacyFactoryLoading &&
-            method_exists($this, 'loadFactoriesFrom') &&
-            file_exists($this->getModulePath().'/Database/Factories')
-        ) {
-            $this->loadFactoriesFrom($this->getModulePath().'/Database/Factories');
+        if (!$this->enableLegacyFactoryLoading || !method_exists($this, 'loadFactoriesFrom')) {
+            return;
+        }
+
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            if ($manifest['factories'] !== null) {
+                $this->loadFactoriesFrom($manifest['factories']);
+            }
+
+            return;
+        }
+
+        if (file_exists($this->getModulePath() . '/Database/Factories')) {
+            $this->loadFactoriesFrom($this->getModulePath() . '/Database/Factories');
         }
     }
 
     private function registerRoutes(): void
     {
         if ($this->app->routesAreCached()) {
+            return;
+        }
+
+        $manifest = $this->getManifest();
+
+        if ($manifest !== null) {
+            foreach ($manifest['routes'] as $file) {
+                $fileName = basename($file);
+
+                if (in_array(rtrim($fileName, '.php'), static::ROUTE_FILE_TYPES) === false) {
+                    continue;
+                }
+
+                $this->loadRoutesFrom($file);
+            }
+
             return;
         }
 
@@ -266,6 +340,16 @@ abstract class Module extends ServiceProvider implements ModuleContract
                 $this->loadRoutesFrom($path);
             }
         }
+    }
+
+    protected function getManifest(): ?array
+    {
+        if (!$this->manifestLoaded) {
+            $this->manifestLoaded = true;
+            $this->cachedManifest = app(ModuleManifest::class)->get($this->getModuleNamespace());
+        }
+
+        return $this->cachedManifest;
     }
 
     /**
