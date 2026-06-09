@@ -17,6 +17,8 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/module-loader.php', 'module-loader');
+
         $this->app->singleton(ModuleRepositoryContract::class, ModuleRepository::class);
     }
 
@@ -27,6 +29,10 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->publishes([
+            __DIR__ . '/../config/module-loader.php' => config_path('module-loader.php'),
+        ], 'module-loader-config');
+
         $loader = new ModuleRouteLoader();
 
         Router::macro('module', function (string $name, ?string $type = 'routes') use ($loader) {

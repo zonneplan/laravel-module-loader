@@ -23,6 +23,9 @@
         "mockery/mockery": "^1.4",
         "orchestra/testbench": "^9.0||^10.0||^11.0"
     },
+    "suggest": {
+        "open-telemetry/api": "Allows applications to convert module profiling measurements to OpenTelemetry spans using the callback or event driver."
+    },
     "autoload": {
         "psr-4": {
             "Zonneplan\\ModuleLoader\\": "src"
