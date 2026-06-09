@@ -52,6 +52,8 @@ class ModuleProfilingTest extends TestCase
         $this->assertSame([ProfilingTestModule::class, ProfilingTestModule::class], array_column($records, 'provider'));
         $this->assertArrayHasKey('duration_ms', $records[0]);
         $this->assertArrayHasKey('duration_ns', $records[0]);
+        $this->assertArrayHasKey('started_at_unix_nano', $records[0]);
+        $this->assertArrayHasKey('ended_at_unix_nano', $records[0]);
     }
 
     public function test_it_profiles_module_boot_steps_when_enabled()
@@ -100,7 +102,9 @@ class ModuleProfilingTest extends TestCase
                 && $event->measurement['provider'] === ProfilingTestModule::class
                 && $event->measurement['operation'] === 'register'
                 && array_key_exists('duration_ms', $event->measurement)
-                && array_key_exists('duration_ns', $event->measurement);
+                && array_key_exists('duration_ns', $event->measurement)
+                && array_key_exists('started_at_unix_nano', $event->measurement)
+                && array_key_exists('ended_at_unix_nano', $event->measurement);
         });
     }
 }

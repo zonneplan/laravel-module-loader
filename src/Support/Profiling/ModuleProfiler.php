@@ -17,6 +17,7 @@ class ModuleProfiler
         }
 
         $startedAt = hrtime(true);
+        $startedAtUnixNanoseconds = $this->unixTimestampNanoseconds();
         $exception = null;
 
         try {
@@ -26,7 +27,16 @@ class ModuleProfiler
 
             throw $throwable;
         } finally {
-            $this->report($module, $operation, hrtime(true) - $startedAt, $exception);
+            $endedAtUnixNanoseconds = $this->unixTimestampNanoseconds();
+
+            $this->report(
+                $module,
+                $operation,
+                hrtime(true) - $startedAt,
+                $startedAtUnixNanoseconds,
+                $endedAtUnixNanoseconds,
+                $exception
+            );
         }
     }
 
@@ -45,9 +55,22 @@ class ModuleProfiler
         return (string) config('module-loader.profiling.driver', 'log');
     }
 
-    private function report(ModuleContract $module, string $operation, int $durationNanoseconds, ?Throwable $exception): void
-    {
-        $measurement = $this->measurement($module, $operation, $durationNanoseconds, $exception);
+    private function report(
+        ModuleContract $module,
+        string $operation,
+        int $durationNanoseconds,
+        int $startedAtUnixNanoseconds,
+        int $endedAtUnixNanoseconds,
+        ?Throwable $exception
+    ): void {
+        $measurement = $this->measurement(
+            $module,
+            $operation,
+            $durationNanoseconds,
+            $startedAtUnixNanoseconds,
+            $endedAtUnixNanoseconds,
+            $exception
+        );
 
         if ($this->driver() === 'callback') {
             $this->reportUsingCallback($measurement);
@@ -91,14 +114,22 @@ class ModuleProfiler
         }
     }
 
-    private function measurement(ModuleContract $module, string $operation, int $durationNanoseconds, ?Throwable $exception): array
-    {
+    private function measurement(
+        ModuleContract $module,
+        string $operation,
+        int $durationNanoseconds,
+        int $startedAtUnixNanoseconds,
+        int $endedAtUnixNanoseconds,
+        ?Throwable $exception
+    ): array {
         $measurement = [
             'module' => $module->getModuleNamespace(),
             'provider' => $module::class,
             'operation' => $operation,
             'duration_ms' => round($durationNanoseconds / 1_000_000, 3),
             'duration_ns' => $durationNanoseconds,
+            'started_at_unix_nano' => $startedAtUnixNanoseconds,
+            'ended_at_unix_nano' => $endedAtUnixNanoseconds,
         ];
 
         if ($exception) {
@@ -107,5 +138,10 @@ class ModuleProfiler
         }
 
         return $measurement;
+    }
+
+    private function unixTimestampNanoseconds(): int
+    {
+        return (int) (microtime(true) * 1_000_000_000);
     }
 }
