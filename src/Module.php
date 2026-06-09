@@ -11,6 +11,7 @@ use ReflectionClass;
 use ReflectionException;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleContract;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
+use Zonneplan\ModuleLoader\Support\Profiling\ModuleProfiler;
 
 /**
  * Class ModuleLoader.
@@ -46,8 +47,10 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     public function register(): void
     {
-        // Register this module in the repository
-        app(ModuleRepositoryContract::class)->register($this->getModuleNamespace(), $this->getModulePath());
+        $this->profile('register', function (): void {
+            // Register this module in the repository
+            app(ModuleRepositoryContract::class)->register($this->getModuleNamespace(), $this->getModulePath());
+        });
     }
 
     /**
@@ -58,20 +61,60 @@ abstract class Module extends ServiceProvider implements ModuleContract
      */
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->registerCommands();
-            $this->loadCommandSchedule();
-            $this->loadMigrations();
-            $this->registerFactories();
+        $this->profile('boot', function (): void {
+            if ($this->app->runningInConsole()) {
+                $this->profileStep('boot.registerCommands', function (): void {
+                    $this->registerCommands();
+                });
+                $this->profileStep('boot.loadCommandSchedule', function (): void {
+                    $this->loadCommandSchedule();
+                });
+                $this->profileStep('boot.loadMigrations', function (): void {
+                    $this->loadMigrations();
+                });
+                $this->profileStep('boot.registerFactories', function (): void {
+                    $this->registerFactories();
+                });
+            }
+
+            $this->profileStep('boot.loadConfigs', function (): void {
+                $this->loadConfigs();
+            });
+            $this->profileStep('boot.loadTranslations', function (): void {
+                $this->loadTranslations();
+            });
+            $this->profileStep('boot.registerListeners', function (): void {
+                $this->registerListeners();
+            });
+            $this->profileStep('boot.loadViews', function (): void {
+                $this->loadViews();
+            });
+            $this->profileStep('boot.registerPolicies', function (): void {
+                $this->registerPolicies();
+            });
+            $this->profileStep('boot.registerRoutes', function (): void {
+                $this->registerRoutes();
+            });
+            $this->profileStep('boot.registerMiddleware', function (): void {
+                $this->registerMiddleware();
+            });
+        });
+    }
+
+    protected function profile(string $operation, callable $callback): mixed
+    {
+        return app(ModuleProfiler::class)->record($this, $operation, $callback);
+    }
+
+    protected function profileStep(string $operation, callable $callback): mixed
+    {
+        $profiler = app(ModuleProfiler::class);
+
+        if (! $profiler->shouldProfileSteps()) {
+            return $callback();
         }
 
-        $this->loadConfigs();
-        $this->loadTranslations();
-        $this->registerListeners();
-        $this->loadViews();
-        $this->registerPolicies();
-        $this->registerRoutes();
-        $this->registerMiddleware();
+        return $profiler->record($this, $operation, $callback);
     }
 
     /**

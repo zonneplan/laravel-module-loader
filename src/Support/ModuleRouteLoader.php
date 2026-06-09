@@ -62,10 +62,7 @@ class ModuleRouteLoader
         }
     }
 
-    /**
-     * @return ModuleRepository
-     */
-    protected function getRepository(): ModuleRepository
+    protected function getRepository(): ModuleRepositoryContract
     {
         return app(ModuleRepositoryContract::class);
     }
