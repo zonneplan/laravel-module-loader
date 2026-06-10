@@ -79,6 +79,55 @@ class ModuleProfilingTest extends TestCase
         $this->assertContains('boot.registerRoutes', $operations);
     }
 
+    public function test_it_skips_module_profiling_when_request_is_not_sampled()
+    {
+        $records = [];
+
+        config([
+            'module-loader.profiling.enabled' => true,
+            'module-loader.profiling.driver' => 'callback',
+            'module-loader.profiling.include_steps' => true,
+            'module-loader.profiling.sample_rate' => 0.0,
+            'module-loader.profiling.reporter' => function (array $measurement) use (&$records): void {
+                $records[] = $measurement;
+            },
+        ]);
+
+        $module = new ProfilingTestModule($this->app);
+
+        $module->register();
+        $module->boot();
+
+        $this->assertEmpty($records);
+    }
+
+    public function test_it_profiles_all_module_measurements_when_request_is_sampled()
+    {
+        $records = [];
+
+        config([
+            'module-loader.profiling.enabled' => true,
+            'module-loader.profiling.driver' => 'callback',
+            'module-loader.profiling.include_steps' => true,
+            'module-loader.profiling.sample_rate' => 1.0,
+            'module-loader.profiling.reporter' => function (array $measurement) use (&$records): void {
+                $records[] = $measurement;
+            },
+        ]);
+
+        $module = new ProfilingTestModule($this->app);
+
+        $module->register();
+        $module->boot();
+
+        $operations = array_column($records, 'operation');
+
+        $this->assertContains('register', $operations);
+        $this->assertContains('boot', $operations);
+        $this->assertContains('boot.loadConfigs', $operations);
+        $this->assertContains('boot.registerRoutes', $operations);
+    }
+
     public function test_it_can_dispatch_profile_measurements_as_events()
     {
         Event::fake([
