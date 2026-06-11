@@ -155,6 +155,7 @@ The following environment variables are available:
 MODULE_LOADER_PROFILING_ENABLED=false
 MODULE_LOADER_PROFILING_DRIVER=log
 MODULE_LOADER_PROFILING_INCLUDE_STEPS=false
+MODULE_LOADER_PROFILING_SAMPLE_RATE=1.0
 MODULE_LOADER_PROFILING_LOG_CHANNEL=null
 ```
 
@@ -164,7 +165,7 @@ Supported drivers:
 - `callback`: calls `module-loader.profiling.reporter`, which may be a callable or a class with a `handle(array $measurement)` method.
 - `event`: dispatches a `Zonneplan\ModuleLoader\Events\ModuleProfiled` event with the measurement.
 
-The base `register()` and `boot()` methods are profiled when enabled. If `include_steps` is enabled, the built-in boot steps like config, translation, view, policy, route, and middleware loading are profiled separately.
+The base `register()` and `boot()` methods are profiled when enabled. If `include_steps` is enabled, the built-in boot steps like config, translation, view, policy, route, and middleware loading are profiled separately. The `sample_rate` value is evaluated once per request or process, so sampled runs keep a complete module loading profile.
 
 OpenTelemetry is intentionally not a dependency of this package. Applications that want OpenTelemetry spans can install `open-telemetry/api` and convert profiling measurements to spans from a callback reporter or a `ModuleProfiled` listener.
 

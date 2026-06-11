@@ -10,9 +10,11 @@ use Zonneplan\ModuleLoader\Support\Contracts\ModuleContract;
 
 class ModuleProfiler
 {
+    private ?bool $shouldSample = null;
+
     public function record(ModuleContract $module, string $operation, callable $callback): mixed
     {
-        if (! $this->isEnabled()) {
+        if (! $this->shouldProfile()) {
             return $callback();
         }
 
@@ -32,7 +34,12 @@ class ModuleProfiler
 
     public function shouldProfileSteps(): bool
     {
-        return $this->isEnabled() && (bool) config('module-loader.profiling.include_steps', false);
+        return $this->shouldProfile() && (bool) config('module-loader.profiling.include_steps', false);
+    }
+
+    private function shouldProfile(): bool
+    {
+        return $this->isEnabled() && $this->shouldSample();
     }
 
     private function isEnabled(): bool
@@ -43,6 +50,25 @@ class ModuleProfiler
     private function driver(): string
     {
         return (string) config('module-loader.profiling.driver', 'log');
+    }
+
+    private function shouldSample(): bool
+    {
+        if ($this->shouldSample !== null) {
+            return $this->shouldSample;
+        }
+
+        $sampleRate = max(0.0, min(1.0, (float) config('module-loader.profiling.sample_rate', 1.0)));
+
+        if ($sampleRate >= 1.0) {
+            return $this->shouldSample = true;
+        }
+
+        if ($sampleRate <= 0.0) {
+            return $this->shouldSample = false;
+        }
+
+        return $this->shouldSample = random_int(1, 1_000_000) <= (int) round($sampleRate * 1_000_000);
     }
 
     private function report(ModuleContract $module, string $operation, int $durationNanoseconds, ?Throwable $exception): void
