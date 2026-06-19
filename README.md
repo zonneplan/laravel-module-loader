@@ -15,6 +15,7 @@
 | 10.0  | ^4.0                     |
 | 11.0  | ^5.0                     |
 | 12.0  | ^6.0                     |
+| 13.0  | ^7.0                     |
 
 The `zonneplan/laravel-module-loader` package provides an easy to use module loader 
 which can be used to modulize your project.
@@ -75,6 +76,7 @@ app
           ├──api.php            
           ├──channels.php       
           ├──console.php        
+          ├──mcp.php        
        ├──MyModuleServiceProvider.php
        ├──tests
 ```
@@ -138,7 +140,34 @@ protected $subscribe = [
 All modules will by default try to load all route files in the `Routes` folder.
 Any of the following files will be auto loaded:
 
-`routes.php` `api.php` `web.php`
+`routes.php` `api.php` `web.php` `mcp.php`
+
+#### Profiling module loading:
+Module loading profiling is disabled by default. Publish the config file to enable it:
+
+``` bash
+php artisan vendor:publish --tag=module-loader-config
+```
+
+The following environment variables are available:
+
+``` dotenv
+MODULE_LOADER_PROFILING_ENABLED=false
+MODULE_LOADER_PROFILING_DRIVER=log
+MODULE_LOADER_PROFILING_INCLUDE_STEPS=false
+MODULE_LOADER_PROFILING_SAMPLE_RATE=1.0
+MODULE_LOADER_PROFILING_LOG_CHANNEL=null
+```
+
+Supported drivers:
+
+- `log`: writes structured timing records to the configured Laravel log channel.
+- `callback`: calls `module-loader.profiling.reporter`, which may be a callable or a class with a `handle(array $measurement)` method.
+- `event`: dispatches a `Zonneplan\ModuleLoader\Events\ModuleProfiled` event with the measurement.
+
+The base `register()` and `boot()` methods are profiled when enabled. If `include_steps` is enabled, the built-in boot steps like config, translation, view, policy, route, and middleware loading are profiled separately. The `sample_rate` value is evaluated once per request or process, so sampled runs keep a complete module loading profile.
+
+OpenTelemetry is intentionally not a dependency of this package. Applications that want OpenTelemetry spans can install `open-telemetry/api` and convert profiling measurements to spans from a callback reporter or a `ModuleProfiled` listener.
 
 ## Requirements
 

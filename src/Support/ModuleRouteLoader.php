@@ -10,7 +10,7 @@ class ModuleRouteLoader
     private const FALLBACK_ROUTE_TYPE = 'routes';
 
     private const ROUTE_TYPES = [
-        self::FALLBACK_ROUTE_TYPE, 'api', 'channels', 'console', 'web',
+        self::FALLBACK_ROUTE_TYPE, 'api', 'channels', 'console', 'web', 'mcp',
     ];
 
     /**
@@ -62,10 +62,7 @@ class ModuleRouteLoader
         }
     }
 
-    /**
-     * @return ModuleRepository
-     */
-    protected function getRepository(): ModuleRepository
+    protected function getRepository(): ModuleRepositoryContract
     {
         return app(ModuleRepositoryContract::class);
     }
