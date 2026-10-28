@@ -2,6 +2,8 @@
 
 namespace Zonneplan\ModuleLoader\Support;
 
+use Illuminate\Support\Arr;
+use LogicException;
 use Zonneplan\ModuleLoader\Support\Contracts\ModuleRepositoryContract;
 use Zonneplan\ModuleLoader\Support\Exceptions\ModuleNotFoundException;
 
@@ -12,6 +14,11 @@ class ModuleRouteLoader
     private const ROUTE_TYPES = [
         self::FALLBACK_ROUTE_TYPE, 'api', 'channels', 'console', 'web', 'mcp',
     ];
+
+    /**
+     * Route types whose file Module::boot() already loads without a route group.
+     */
+    private const AUTOLOADED_ROUTE_TYPES = ['api', 'web', 'mcp'];
 
     /**
      * @param string $type
@@ -44,6 +51,8 @@ class ModuleRouteLoader
      * @param string $path
      * @param string $type
      *
+     * @throws LogicException
+     *
      * @return void
      */
     protected function loadRoutes(string $path, string $type): void
@@ -57,8 +66,35 @@ class ModuleRouteLoader
             : "{$path}/Routes/{$type}.php";
 
         if (file_exists($file)) {
+            if (in_array($type, self::AUTOLOADED_ROUTE_TYPES, true)) {
+                $this->ensureGroupKeepsRouteUris($file);
+            }
+
             /** @noinspection PhpIncludeInspection */
             require $file;
+        }
+    }
+
+    /**
+     * A group with a prefix or domain gives the routes a different URI, so the copy Module::boot() registered
+     * without middleware stays reachable next to the grouped one.
+     *
+     * @param string $file
+     *
+     * @throws LogicException
+     *
+     * @return void
+     */
+    protected function ensureGroupKeepsRouteUris(string $file): void
+    {
+        $group = Arr::last(app('router')->getGroupStack()) ?? [];
+
+        if (filled($group['prefix'] ?? null) || filled($group['domain'] ?? null)) {
+            throw new LogicException(
+                "{$file} is already loaded by the module without a route group. Loading it again in a group with a "
+                .'prefix or domain leaves that copy reachable without the group\'s middleware. Declare the '
+                .'middleware, prefix and domain in the route file instead.'
+            );
         }
     }
 

@@ -142,6 +142,23 @@ Any of the following files will be auto loaded:
 
 `routes.php` `api.php` `web.php` `mcp.php`
 
+These files are loaded without a route group, so they don't get the `web` or `api` middleware group, a prefix or a
+domain from the application. Declare the middleware (authentication, throttling, etc.), prefix and domain in the route
+file itself:
+
+``` php
+Route::middleware(['api', 'auth:api'])
+    ->prefix('api')
+    ->group(function () {
+        Route::get('stock', StockController::class);
+    });
+```
+
+Don't load these files again with `Route::module($name, 'api')` or `Route::modules('api')` (or `web`/`mcp`) inside a
+group with a prefix or domain: the auto-loaded copy would stay reachable without the group's middleware. The macros
+throw a `LogicException` in that case. A middleware-only group is allowed, because its routes replace the auto-loaded
+ones.
+
 #### Profiling module loading:
 Module loading profiling is disabled by default. Publish the config file to enable it:
 
